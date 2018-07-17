@@ -12,30 +12,28 @@ import os,time
 
 delete=True
 hsh=None
+pictures=('.jpg','.jpeg','.png')
 df=pd.DataFrame()
 rootdir=os.path.dirname(os.path.realpath(__file__))
 for root, subdirs, files in os.walk(rootdir):
-    print()
-    print(root,end='')
+    print(root)
     for i,f in enumerate(files):
         lf=f.lower()
-        if lf.endswith('.mp4') or lf.endswith('.jpg'):
-            if i%100==0 and i>0: print(i,end='')
-            print('.',end='')
+        if lf.endswith('.mp4') or lf.endswith(pictures):
             fl=os.path.join(root,f)
             dt=os.path.getmtime(fl)
             if lf.endswith('.mp4'):
                 cap = cv2.VideoCapture(fl)
                 ret, frame = cap.read()
                 cap.release()
-            if lf.endswith('.jpg'):
+            if lf.endswith(pictures):
                 ret=True
                 frame=cv2.imread(fl,0)
             sz=os.path.getsize(fl)
             if ret is True and frame is not None:
                 hsh=hashlib.md5(frame).hexdigest()
                 df=df.append(pd.DataFrame([[fl,hsh,dt,sz]],columns=['filename','hash','date','size']),ignore_index=True)
-                print(f,hsh)
+                print('\t',f,hsh)
             #time.ctime(dt)
             
 
